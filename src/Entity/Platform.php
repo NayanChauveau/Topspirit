@@ -1,0 +1,257 @@
+<?php
+
+namespace App\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PlatformRepository;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
+
+/**
+ * @ORM\Entity(repositoryClass=PlatformRepository::class)
+ * @Vich\Uploadable
+ */
+class Platform
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Url
+     */
+    private $url;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $banner;
+
+    /**
+     * @Vich\UploadableField(mapping="platforms", fileNameProperty="banner")
+     * 
+     * @var File|null
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="platforms")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $content;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Subscriptions::class, mappedBy="platform")
+     */
+    private $subscriptions;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $stripeId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $monthPriceId;
+
+    /**
+     * @ORM\Column(type="date_immutable", nullable=true)
+     */
+    private $endOfSubscription;
+
+    public function __construct()
+    {
+        $this->subscriptions = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(?string $banner): self
+    {
+        $this->banner = $banner;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(?string $content): self
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+    
+	/**
+	 * 
+	 * @return File|null
+	 */
+	function getImageFile() {
+                                                           return $this->imageFile;
+                                                       }
+	
+	/**
+	 * 
+	 * @param File|null $imageFile 
+	 * @return Platform
+	 */
+	function setImageFile(File $imageFile = null): self {
+                                                           $this->imageFile = $imageFile;
+                                                   
+                                                           if ($imageFile) {
+                                                               $this->createdAt = new  \DateTimeImmutable();
+                                                           }
+                                                   
+                                                           return $this;
+                                                       }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Subscriptions[]
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscriptions $subscription): self
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions[] = $subscription;
+            $subscription->setPlatform($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscriptions $subscription): self
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            // set the owning side to null (unless already changed)
+            if ($subscription->getPlatform() === $this) {
+                $subscription->setPlatform(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStripeId(): ?string
+    {
+        return $this->stripeId;
+    }
+
+    public function setStripeId(?string $stripeId): self
+    {
+        $this->stripeId = $stripeId;
+
+        return $this;
+    }
+
+    public function getMonthPriceId(): ?string
+    {
+        return $this->monthPriceId;
+    }
+
+    public function setMonthPriceId(?string $monthPriceId): self
+    {
+        $this->monthPriceId = $monthPriceId;
+
+        return $this;
+    }
+
+    public function getEndOfSubscription(): ?\DateTimeImmutable
+    {
+        return $this->endOfSubscription;
+    }
+
+    public function setEndOfSubscription(?\DateTimeImmutable $endOfSubscription): self
+    {
+        $this->endOfSubscription = $endOfSubscription;
+
+        return $this;
+    }
+}

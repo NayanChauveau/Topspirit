@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Controller;
+
+use Stripe\Stripe;
+use App\Entity\Platform;
+use App\Entity\Subscriptions;
+use App\Repository\SubscriptionsRepository;
+use Stripe\StripeClient;
+use Stripe\Checkout\Session;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Monolog\DateTimeImmutable;
+
+class PaymentController extends AbstractController
+{
+    /**
+     * @Route("/payment/{id}", name="payment")
+     */
+    public function index(Platform $platform): Response
+    {
+
+        $user = $this->getUser();
+
+        if ($user !== $platform->getUser()) throw new AccessDeniedHttpException();
+
+        return $this->render('payment/index.html.twig', [
+            'platform' => $platform
+        ]);
+        
+
+    }
+
+    /**
+     * @Route("/checkout/{id}", name="checkout")
+     */
+    public function checkout($stripeSK, EntityManagerInterface $em, Platform $platform): Response
+    {
+        $user = $this->getUser();
+
+        if ($user !== $platform->getUser()) throw new AccessDeniedHttpException();
+
+        Stripe::setApiKey($stripeSK);
+
+        $this->trySetClient($stripeSK, $em);
+        
+        $this->trySetPrice($platform, $stripeSK, $em);
+
+        $session = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price' => $platform->getMonthPriceId(),
+                'quantity' => 1
+            ]],
+            'mode' => 'payment',
+            'customer' => $user->getStripeId(),
+            'success_url' => $this->generateUrl('success_url', ['id' => $platform->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => $this->generateUrl('cancel_url', [], UrlGeneratorInterface::ABSOLUTE_URL),
+        ]);
+
+        return $this->redirect($session->url, 303);
+    }
+
+    /**
+     * @Route("/success/{id}", name="success_url")
+     */
+    public function successUrl(Request $request, $stripeSK, SubscriptionsRepository $subRepo, Platform $platform, EntityManagerInterface $em): Response
+    {
+        Stripe::setApiKey($stripeSK);
+
+        $user = $this->getUser();
+        $session = Session::retrieve($request->get('session_id'));
+        $line_items = $session->allLineItems($session['id']);
+
+        
+        if($subRepo->doesExistsByPiId($session->payment_intent)) return $this->redirectToRoute('profile');
+        if($platform->getUser() !== $user) throw new AccessDeniedHttpException();
+        
+        $subscription = new Subscriptions();
+        $subscription
+            ->setUser($user)
+            ->setPlatform($platform)
+            ->setPaymentIntent($session->payment_intent)
+            ->setCustomerId($session->customer)
+            ->setProductId($line_items->data[0]->price->product)
+            ->setCreationDate(new \DateTimeImmutable())
+        ;
+        
+        $platform->setEndOfSubscription(
+            $platform->getEndOfSubscription() === null ?
+            (new \DateTimeImmutable())->modify('+1 month') :
+                $platform->getEndOfSubscription()->modify('+1 month')
+            );
+
+        $em->persist($subscription);
+        $em->persist($platform);
+        $em->flush();
+
+
+
+        return $this->render('payment/success.html.twig', [
+            'customer' => '$customer'
+        ]);
+    }
+
+    /**
+     * @Route("/cancel", name="cancel_url")
+     */
+    public function cancelUrl(): Response
+    {
+        return $this->render('payment/cancel.html.twig', []);
+    }
+
+
+    private function trySetClient($stripeSK, $em) {
+        $user = $this->getUser();
+
+        if($user->getStripeId() === null) {
+            $stripe = new StripeClient($stripeSK);
+            $customer = $stripe->customers->create();
+    
+            $user->setStripeId($customer['id']);
+    
+            $em->persist($user);
+            $em->flush();
+        }
+    }
+
+    private function trySetPrice($platform, $stripeSK, $em) {
+        if($platform->getStripeId() === null) {
+            $stripe = new StripeClient($stripeSK);
+            $product = $stripe->products->create([
+                'name' => $platform->getId() . ' - ' . $platform->getName()
+            ]);
+            $price = $stripe->prices->create([
+                'unit_amount' => 5000,
+                'currency' => 'eur',
+                'product' => $product['id']
+            ]);
+
+            $platform->setStripeId($product['id']);
+            $platform->setMonthPriceId($price['id']);
+
+            $em->persist($platform);
+            $em->flush();
+        }
+    }
+}

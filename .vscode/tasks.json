@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "symfony server 8000",
+            "type": "shell",
+            "command": "php bin/console server:run",
+            "windows": {
+                "command": "php bin/console server:run"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "new"
+            },
+            "runOptions": { "runOn": "folderOpen" }
+        },
+        {
+            "label": "maildev",
+            "type": "shell",
+            "command": "maildev --web 1080 --smtp 1025 --hide-extensions STARTTLS",
+            "windows": {
+                "command": "maildev --web 1080 --smtp 1025 --hide-extensions STARTTLS"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "new"
+            },
+            "runOptions": { "runOn": "folderOpen" }
+        }
+    ]
+}

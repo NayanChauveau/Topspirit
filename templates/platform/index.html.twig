@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Platform index{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Platform index</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Url</th>
+                    <th>Banner</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for platform in platforms %}
+                <tr>
+                    <td>{{ platform.id }}</td>
+                    <td>{{ platform.name }}</td>
+                    <td>{{ platform.url }}</td>
+                    <td>{{ platform.banner }}</td>
+                    <td>
+                        <a href="{{ path('platform_show', {'id': platform.id}) }}">show</a>
+                        <a href="{{ path('platform_edit', {'id': platform.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('platform_new') }}">Create new</a>
+        </div>
+{% endblock %}

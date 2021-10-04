@@ -1,0 +1,15 @@
+{{ form_start(form) }}
+    {{ form_row(form.name, { 'label': 'Nom de la plateforme' }) }}
+    {{ form_row(form.content, { 'label': 'Description de la plateforme' }) }}
+    {{ form_row(form.url, { 'label': 'Url du site' }) }}
+    <div class="row mb-3">
+    {% if platform.banner is not empty %}
+        <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('mini_miniature') }}" alt="" class="mh-100 col-2">
+    {% endif %}
+    <div class="col d-flex flex-column justify-content-center">
+        {{ form_row(form.imageFile, { 'label': 'Votre bannière (200px x 250px)' }) }}
+    </div>
+    </div>
+    
+    <button class="btn btn-primary mb-4">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

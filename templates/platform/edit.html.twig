@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Platform{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Editer {{ platform.name }}</h1>
+
+    {{ include('platform/_form.html.twig', {'button_label': 'Editer'}) }}
+
+    <div class="d-flex align-items-center mb-4">
+        {% if date(platform.endOfSubscription) == null or date(platform.endOfSubscription) < date('now') %}
+            <div class="mb-0 alert alert-info">Votre plateforme n'est pas premium, upgradez pour plus de visibilité</div>
+            <a href="{{ path('payment', {id: platform.id}) }}" class="btn btn-primary ms-auto">Upgrader ma plateforme</a>
+        {% else %}
+            <div class="mb-0 alert alert-info">Votre plateforme est premium jusqu'au {{ platform.endOfSubscription | date('d/m/Y') }}</div>
+        {% endif %}
+    </div>
+
+
+    <form method="post" action="{{ path('platform_delete', {'id': platform.id}) }}" onsubmit="return confirm('Etes vous sûr de vouloir supprimer la plateforme ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ platform.id) }}">
+        <button class="btn btn-danger">Supprimer la plateforme</button>
+    </form>
+    </div>
+{% endblock %}
