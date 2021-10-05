@@ -65,7 +65,7 @@ class PlatformController extends AbstractController
     /**
      * @Route("/{id}/edit", name="platform_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Platform $platform): Response
+    public function edit(Request $request, Platform $platform, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
@@ -75,7 +75,10 @@ class PlatformController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash('success', 'Votre plateforme ' . $platform->getName() . ' a bien été éditée');
+
+            $em->flush();
 
             return $this->redirectToRoute('profile');
         }
@@ -92,6 +95,9 @@ class PlatformController extends AbstractController
     public function delete(Request $request, Platform $platform, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete' . $platform->getId(), $request->request->get('_token'))) {
+
+            $this->addFlash('success', 'Votre plateforme ' . $platform->getName() . ' a bien été supprimée');
+
             $em->remove($platform);
             $em->flush();
         }

@@ -56,6 +56,12 @@ class Platform
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Assert\Length(
+     *      min = 20,
+     *      max = 200,
+     *      minMessage = "Votre description doit faire au moins {{ limit }} caractères",
+     *      maxMessage = "Votre description ne doit pas faire plus de {{ limit }} caractères"
+     * )
      */
     private $content;
 

@@ -18,6 +18,15 @@
         <div class="tab-content" id="myTabContent">
 
 
+
+            {########### Messages flashs ###########}
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
             {########### Editer le profil ###########}
 
 

@@ -25,7 +25,7 @@ class PlatformRepository extends ServiceEntityRepository
     public function findPremiums()
     {
         return $this->createQueryBuilder('p')
-            ->where('p.endOfSubscription > :date')
+            ->where('p.endOfSubscription >= :date')
             ->setParameter('date', new \DateTimeImmutable)
             ->orderBy('p.id', 'ASC') // A changer avec le nombre de visites qu'ils renvoient
             ->setMaxResults(10)
@@ -33,6 +33,30 @@ class PlatformRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return Platform[] Returns an array of Platform objects
+     */
+    public function findAllPremiumsFirst()
+    {
+        return array_merge(
+            $this->createQueryBuilder('p')
+            ->where('p.endOfSubscription >= :date')
+            ->setParameter('date', new \DateTimeImmutable)
+            ->orderBy('p.id', 'ASC') // A changer avec le nombre de visites qu'ils renvoient
+            ->getQuery()
+            ->getResult(),
+            $this->createQueryBuilder('p')
+            ->where('p.endOfSubscription < :date OR p.endOfSubscription is NULL')
+            ->setParameter('date', new \DateTimeImmutable)
+            ->orderBy('p.id', 'ASC') // A changer avec le nombre de visites qu'ils renvoient
+            ->getQuery()
+            ->getResult(),
+            )
+        ;
+    }
+
+
 
 
     // /**

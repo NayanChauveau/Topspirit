@@ -91,14 +91,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $isVerified = false;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @UserPassword(
-     *     message = "Wrong value for your current password"
-     * )
-     */
-    private $oldPassword;
-
     public function __construct()
     {
         $this->platforms = new ArrayCollection();
@@ -353,18 +345,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
-
-        return $this;
-    }
-
-    public function getOldPassword(): ?string
-    {
-        return $this->oldPassword;
-    }
-
-    public function setOldPassword(?string $oldPassword): self
-    {
-        $this->oldPassword = $oldPassword;
 
         return $this;
     }

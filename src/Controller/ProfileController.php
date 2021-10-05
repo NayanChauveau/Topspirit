@@ -35,19 +35,25 @@ class ProfileController extends AbstractController
         $passwordform->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->addFlash('success', 'Votre compte a bien été édité');
+
             $em->persist($user);
             $em->flush();
-        } elseif ($passwordform->isSubmitted() && $passwordform->isValid() && $passwordHasher->isPasswordValid($user, $passwordform->get('plainPassword')->getData())) {
+            
+        } elseif ($passwordform->isSubmitted() && $passwordform->isValid()) {
+
             $user->setPassword(
                 $passwordHasher->hashPassword(
                     $user,
                     $passwordform->get('plainPassword')->getData()
                 )
             );
+
+            $this->addFlash('success', 'Votre mot de passe a bien été changé');
+
             $em->persist($user);
             $em->flush();
-        } elseif ($passwordform->isSubmitted() && $passwordform->isValid()) {
-            $passwordform->addError(new FormError('Ancien mot de passe incorrect'));
         }
 
         return $this->render('profile/index.html.twig', [
