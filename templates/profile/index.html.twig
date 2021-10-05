@@ -4,65 +4,106 @@
 
 {% block body %}
     <div class="container mt-5">
-        <h2>Editez votre profil</h2>
-        {{ form_start(form) }}
-        <div class="row">
-            <div class="col">
-                {{ form_row(form.firstname, {label: 'Prénom', attr: {placeholder: 'Entrez votre prénom'}}) }}
-            </div>
-            <div class="col">
-                {{ form_row(form.name, {label: 'Nom', attr: {placeholder: 'Entrez votre nom'}}) }}
-            </div>
-        </div>
-        {{ form_row(form.email) }}
-        <button type="submit" class="btn btn-success">Editer</button>
-        {{ form_end(form) }}
+        <ul class="nav nav-tabs mb-5" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Mon profil</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Mes platformes</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Publicités</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
 
-        <hr class="mt-5 mb-5">
 
-        <h2 class="mb-5">Vos plateformes</h2>
+            {########### Editer le profil ###########}
 
-        {% if plateforms is empty %}
-            <div class="alert alert-info">Vous n'avez pas encore de plateforme, créez en une !</div>
-        {% endif %}
-        <div class="row mt-1 mb-4">
-            {% for plateform in plateforms %}
-                <div class="col-md-12">
-                    <div class="row g-0 border rounded flex-md-row mb-4 shadow-sm h-md-250 position-relative">
 
-                        {% if date(plateform.endOfSubscription) != null and date(plateform.endOfSubscription) > date('now') %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger w-auto">
-                                Premium
-                            </span>
-                        {% endif %}
-
-                        <div class="col-auto d-none d-lg-block">
-                            <img src="{{ vich_uploader_asset(plateform, 'imageFile') | imagine_filter('miniature') }}" alt="">
-                        </div>
-                        <div class="col p-4 d-flex flex-column position-static">
-                            <strong class="d-inline-block mb-2 text-primary">World</strong>
-                            <h3 class="mb-0">{{ plateform.name }}</h3>
-                            <div class="mb-1 text-muted">Nov 12</div>
-                            {% if plateform.content %}
-                                <p class="card-text mb-auto">{{ plateform.content }}</p>
-                            {% endif %}
-                            <a href="{{ path('platform_edit', {id: plateform.id}) }}" class="stretched-link">Continue reading</a>
-                        </div>
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <h2>Editez votre profil</h2>
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col">
+                        {{ form_row(form.firstname, {label: 'Prénom', attr: {placeholder: 'Entrez votre prénom'}}) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(form.name, {label: 'Nom', attr: {placeholder: 'Entrez votre nom'}}) }}
                     </div>
                 </div>
-            {% endfor %}
+                {{ form_row(form.email) }}
+                    <button type="submit" class="btn btn-primary">Editer</button>
+                {{ form_end(form) }}
+
+                <hr class="mb-5 mt-5">
+
+                <h2>Editez votre mot de passe</h2>
+                {{ form_start(passwordform)}}
+                    
+                    
+                    {{ form_row(passwordform.oldPassword) }}
+                    <div class="row mb-3">
+                        {{ form_row(passwordform.plainPassword) }}
+                    </div>
+                    {{ form_row(passwordform._token) }}
+                    <button type="submit" class="btn btn-danger">Editer</button>
+                {{ form_end(passwordform)}}
+            </div>
+
+
+            
+            {########### Les platformes ###########}
+
+
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <h2 class="mb-5">Vos plateformes</h2>
+
+                {% if plateforms is empty %}
+                    <div class="alert alert-info">Vous n'avez pas encore de plateforme, créez en une !</div>
+                {% endif %}
+                <div class="row mt-1 mb-4">
+                    {% for plateform in plateforms %}
+                        <div class="col-md-12">
+                            <div class="row g-0 border rounded flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+
+                                {% if date(plateform.endOfSubscription) != null and date(plateform.endOfSubscription) > date('now') %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger w-auto">
+                                        Premium
+                                    </span>
+                                {% endif %}
+
+                                <div class="col-auto d-none d-lg-block">
+                                    <img src="{{ vich_uploader_asset(plateform, 'imageFile') | imagine_filter('miniature') }}" alt="">
+                                </div>
+                                <div class="col p-4 d-flex flex-column position-static">
+                                    <strong class="d-inline-block mb-2 text-primary">World</strong>
+                                    <h3 class="mb-0">{{ plateform.name }}</h3>
+                                    <div class="mb-1 text-muted">Nov 12</div>
+                                    {% if plateform.content %}
+                                        <p class="card-text mb-auto">{{ plateform.content }}</p>
+                                    {% endif %}
+                                    <a href="{{ path('platform_edit', {id: plateform.id}) }}" class="stretched-link">Continue reading</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a href="{{ path('platform_new') }}" class="btn btn-primary">Créer une plateforme</a>
+            </div>
+
+            {########### Les publicités ###########}
+
+
+            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                <h2 class="mb-3">Mettez votre bannière en première page du site !</h2>
+                <h6 class="mb-5">Positionnez-vous tout en haut de la page d'accueil avec une bannière format xl !</h6>
+
+                <p>La bannière est disponible à partir du 26/04/2021</p>
+                <form action="{{ path('checkout', {id: 'yo'}) }}" method="POST">
+                    <button type="submit" class="btn btn-primary ">Je me lance !</button>
+                </form>
+            </div>
         </div>
-        <a href="{{ path('platform_new') }}" class="btn btn-primary">Créer une plateforme</a>
-        
-
-        <hr class="mt-5 mb-5">
-
-        <h2 class="mb-3">Mettez votre bannière en première page du site !</h2>
-        <h6 class="mb-5">Positionnez-vous tout en haut de la page d'accueil avec une bannière format xl !</h6>
-
-        <p>La bannière est disponible à partir du 26/04/2021</p>
-        <form action="{{ path('checkout', {id: 'yo'}) }}" method="POST">
-            <button type="submit" class="btn btn-primary ">Je me lance !</button>
-        </form>
     </div>
 {% endblock %}
