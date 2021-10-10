@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Advertising;
 use Stripe\Stripe;
 use App\Entity\Platform;
 use App\Entity\Subscriptions;
+use App\Repository\AdvertisingRepository;
 use App\Repository\SubscriptionsRepository;
 use Stripe\StripeClient;
 use Stripe\Checkout\Session;
@@ -37,6 +39,38 @@ class PaymentController extends AbstractController
     }
 
     /**
+     * @Route("/checkout/publicite", name="advertising_checkout")
+     */
+    public function advertisingCheckout($stripeSK, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        Stripe::setApiKey($stripeSK);
+
+        $this->trySetClient($stripeSK, $em);
+
+        $session = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'eur',
+                    'product_data' => [
+                        'name' => 'mois publicité TopSpirit',
+                    ],
+                    'unit_amount' => 15000,
+                ],
+                'quantity' => 1
+            ]],
+            'mode' => 'payment',
+            'customer' => $user->getStripeId(),
+            'success_url' => $this->generateUrl('success_pub_url', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => $this->generateUrl('cancel_url', [], UrlGeneratorInterface::ABSOLUTE_URL),
+        ]);
+
+        return $this->redirect($session->url, 303);
+    }
+
+    /**
      * @Route("/checkout/{id}", name="checkout")
      */
     public function checkout($stripeSK, EntityManagerInterface $em, Platform $platform): Response
@@ -64,6 +98,42 @@ class PaymentController extends AbstractController
         ]);
 
         return $this->redirect($session->url, 303);
+    }
+
+    /**
+     * @Route("/success/publicite", name="success_pub_url")
+     */
+    public function successPubUrl(Request $request, $stripeSK, EntityManagerInterface $em, AdvertisingRepository $advRepo): Response
+    {
+        Stripe::setApiKey($stripeSK);
+
+        $user = $this->getUser();
+        $session = Session::retrieve($request->get('session_id'));
+        $line_items = $session->allLineItems($session['id']);
+
+        
+        if($advRepo->doesExistsByPiId($session->payment_intent)) return $this->redirectToRoute('profile');
+
+        $advRepo->findAll();
+        
+        $advertising = new Advertising;
+        $advertising
+            ->setUser($user)
+            ->setPaymentIntent($session->payment_intent)
+            ->setCustomerId($session->customer)
+            ->setStartingDate($advRepo->dateOfDisponibility()->modify('+1 day'))
+            ->setEndingDate($advRepo->dateOfDisponibility()->modify('+1 month +1 day'))
+        ;
+        
+
+        $em->persist($advertising);
+        $em->flush();
+
+
+
+        return $this->render('payment/success.html.twig', [
+            'customer' => '$customer'
+        ]);
     }
 
     /**

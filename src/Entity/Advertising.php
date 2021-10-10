@@ -38,6 +38,16 @@ class Advertising
      */
     private $endingDate;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $paymentIntent;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $customerId;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -87,6 +97,30 @@ class Advertising
     public function setEndingDate(\DateTimeImmutable $endingDate): self
     {
         $this->endingDate = $endingDate;
+
+        return $this;
+    }
+
+    public function getPaymentIntent(): ?string
+    {
+        return $this->paymentIntent;
+    }
+
+    public function setPaymentIntent(string $paymentIntent): self
+    {
+        $this->paymentIntent = $paymentIntent;
+
+        return $this;
+    }
+
+    public function getCustomerId(): ?string
+    {
+        return $this->customerId;
+    }
+
+    public function setCustomerId(string $customerId): self
+    {
+        $this->customerId = $customerId;
 
         return $this;
     }

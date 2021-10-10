@@ -2,9 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Advertising;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Advertising|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,6 +22,67 @@ class AdvertisingRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Advertising::class);
     }
+
+    /**
+     * @return Boolean
+     */
+
+    public function doesExistsByPiId($pi)
+    {
+        return !empty($this->createQueryBuilder('p')
+            ->where('p.paymentIntent = :pi')
+            ->setParameter('pi', $pi)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult())
+        ;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+
+    public function dateOfDisponibility()
+    {
+        $lastAdvertising = $this->createQueryBuilder('p')
+        ->addOrderBy('p.endingDate', 'DESC')
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getResult()
+        ;
+
+        if (
+            empty($lastAdvertising)
+            || $lastAdvertising[0]->getEndingDate() < new \DateTimeImmutable
+            ) {
+            return new \DateTimeImmutable;
+        }
+
+        return $lastAdvertising[0]->getEndingDate()
+        ;
+    }
+
+
+    /**
+     * @return Advertising[] Returns an array of Advertising objects
+     */
+    
+    public function findActiveByUser(User $user)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.user = :user')
+            ->andWhere('a.endingDate > :date')
+            ->setParameters(new ArrayCollection([
+                new Parameter('user', $user),
+                new Parameter('date', new \DateTimeImmutable, Types::DATE_IMMUTABLE)
+            ]))
+            ->orderBy('a.endingDate', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
+
 
     // /**
     //  * @return Advertising[] Returns an array of Advertising objects
@@ -35,6 +100,8 @@ class AdvertisingRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
 
     /*
     public function findOneBySomeField($value): ?Advertising

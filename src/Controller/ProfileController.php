@@ -4,13 +4,13 @@ namespace App\Controller;
 
 use App\Form\ProfileType;
 use App\Form\PasswordChangeType;
+use App\Repository\AdvertisingRepository;
 use App\Repository\PlatformRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -19,7 +19,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profil", name="profile")
      */
-    public function index(PlatformRepository $plateformRepo, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    public function index(PlatformRepository $plateformRepo, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, AdvertisingRepository $advertisingRepository): Response
     {
         $user = $this->getUser();
         if ($user->isVerified() === false) throw new AccessDeniedHttpException(); // Changer par une redirection vers une page qui dit de valider le mail
@@ -28,11 +28,14 @@ class ProfileController extends AbstractController
             ['user' => $user]
         );
 
+        $activeAdvertising = $advertisingRepository->findActiveByUser($user);
+
         $form = $this->createForm(ProfileType::class, $user);
         $passwordform = $this->createForm(PasswordChangeType::class, $user);
 
         $form->handleRequest($request);
         $passwordform->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -59,7 +62,8 @@ class ProfileController extends AbstractController
         return $this->render('profile/index.html.twig', [
             'plateforms' => $plateforms,
             'form' => $form->createView(),
-            'passwordform' => $passwordform->createView()
+            'passwordform' => $passwordform->createView(),
+            'advertisings' => $activeAdvertising
         ]);
     }
 }

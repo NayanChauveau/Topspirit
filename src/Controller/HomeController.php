@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\AdvertisingRepository;
 use App\Repository\PlatformRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function index(PlatformRepository $platformRepo): Response
+    public function index(PlatformRepository $platformRepo, AdvertisingRepository $ar): Response
     {
 
         $platforms = $platformRepo->findPremiums();
