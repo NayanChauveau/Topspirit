@@ -39,6 +39,9 @@ class PlatformController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $platform->setUser($user);
+            $platform->setRedirectToken(sha1(random_bytes(12)));
+
+            $platform->setActualMonth(new \DateTimeImmutable);
 
             $em->persist($platform);
             $em->flush();
@@ -103,5 +106,23 @@ class PlatformController extends AbstractController
         }
 
         return $this->redirectToRoute('profile');
+    }
+
+    /**
+     * @Route("/redirect/{redirectToken}", name="redirect")
+     */
+    public function platformRedirect(Platform $platform, EntityManagerInterface $em): Response
+    {
+        if ($platform->getActualMonth()->format('n') != (new \DateTimeImmutable)->format('n')) {
+            $platform->setActualMonth(new \DateTimeImmutable);
+            $platform->setMonthRedirect(1);
+        } else {
+            $platform->setMonthRedirect($platform->getMonthRedirect() === null ? 1 : $platform->getMonthRedirect() + 1);
+        }
+
+        $em->persist($platform);
+        $em->flush();
+
+        return $this->redirectToRoute('home'); // Je pense le changer par une redirection vers la platforme
     }
 }

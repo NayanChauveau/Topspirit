@@ -37,7 +37,8 @@ class RegistrationFormType extends AbstractType
                     'label' => 'Mot de passe',
                     'row_attr' => [
                         'class' => 'col', 
-                    ]
+                    ],
+                    'help' => 'Votre mot de passe doit contenir au moins 8 caractères, une minuscule, une majuscule, un chiffre et un caractère spécial.'
                 ],
                 'second_options' => [
                     'label' => 'Répétez le mot de passe',

@@ -8,6 +8,10 @@
 
     {{ include('platform/_form.html.twig', {'button_label': 'Editer'}) }}
 
+    <div class="alert alert-danger">Pour faire monter votre site dans les résultats, redirigez vos clients vers cette url :<br>{{ url('redirect', {redirectToken: platform.redirectToken}) }}</div>
+
+    <hr class="mb-4">
+
     <div class="d-flex align-items-center mb-4">
         {% if date(platform.endOfSubscription) == null or date(platform.endOfSubscription) < date('now') %}
             <div class="mb-0 alert alert-info">Votre plateforme n'est pas premium, upgradez pour plus de visibilité</div>

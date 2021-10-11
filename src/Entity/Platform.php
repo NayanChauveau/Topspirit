@@ -93,6 +93,21 @@ class Platform
      */
     private $endOfSubscription;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $redirectToken;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $monthRedirect;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $actualMonth;
+
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
@@ -168,8 +183,8 @@ class Platform
 	 * @return File|null
 	 */
 	function getImageFile() {
-        return $this->imageFile;
-    }
+                                   return $this->imageFile;
+                               }
 	
 	/**
 	 * 
@@ -177,14 +192,14 @@ class Platform
 	 * @return Platform
 	 */
 	function setImageFile(File $imageFile = null): self {
-        $this->imageFile = $imageFile;
-
-        if ($imageFile) {
-            $this->createdAt = new  \DateTimeImmutable();
-        }
-
-        return $this;
-    }
+                                   $this->imageFile = $imageFile;
+                           
+                                   if ($imageFile) {
+                                       $this->createdAt = new  \DateTimeImmutable();
+                                   }
+                           
+                                   return $this;
+                               }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -260,6 +275,42 @@ class Platform
     public function setEndOfSubscription(?\DateTimeImmutable $endOfSubscription): self
     {
         $this->endOfSubscription = $endOfSubscription;
+
+        return $this;
+    }
+
+    public function getRedirectToken(): ?string
+    {
+        return $this->redirectToken;
+    }
+
+    public function setRedirectToken(?string $redirectToken): self
+    {
+        $this->redirectToken = $redirectToken;
+
+        return $this;
+    }
+
+    public function getMonthRedirect(): ?int
+    {
+        return $this->monthRedirect;
+    }
+
+    public function setMonthRedirect(?int $monthRedirect): self
+    {
+        $this->monthRedirect = $monthRedirect;
+
+        return $this;
+    }
+
+    public function getActualMonth(): ?\DateTimeImmutable
+    {
+        return $this->actualMonth;
+    }
+
+    public function setActualMonth(\DateTimeImmutable $actualMonth): self
+    {
+        $this->actualMonth = $actualMonth;
 
         return $this;
     }
