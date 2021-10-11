@@ -108,6 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Seriali
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url
      */
     private $advUrl;
 

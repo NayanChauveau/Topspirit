@@ -25,7 +25,8 @@ class PasswordChangeType extends AbstractType
                         'message' => 'Mauvaise valeur pour votre mot de passe actuel'
                     ])
                 ],
-                'mapped' => false
+                'mapped' => false,
+                'label' => 'Ancien mot de passe'
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -36,7 +37,8 @@ class PasswordChangeType extends AbstractType
                     'label' => 'Mot de passe',
                     'row_attr' => [
                         'class' => 'col', 
-                    ]
+                    ],
+                    'help' => 'Votre mot de passe doit contenir au moins 8 caractères, une minuscule, une majuscule, un chiffre et un caractère spécial.',
                 ],
                 'second_options' => [
                     'label' => 'Répétez le mot de passe',

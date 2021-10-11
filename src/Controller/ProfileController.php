@@ -60,6 +60,7 @@ class ProfileController extends AbstractController
             
             $em->persist($user);
             $em->flush();
+            
         } elseif ($advForm->isSubmitted() && $advForm->isValid()) {
 
             $this->addFlash('success', 'Votre bannière de pub a bien été éditée');

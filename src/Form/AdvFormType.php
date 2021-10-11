@@ -17,7 +17,8 @@ class AdvFormType extends AbstractType
                 'required' => false,
                 'allow_delete' => false,
                 'download_uri' => false,
-                'label' => 'Uploadez votre bannière'
+                'label' => 'Uploadez votre bannière',
+                'help' => 'Format de l\'image 1296 x 250',
             ])
             ->add('advUrl', null, [
                 'label' => 'Url de votre site'

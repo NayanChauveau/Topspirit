@@ -19,7 +19,8 @@ class PlatformType extends AbstractType
             ->add('imageFile', VichFileType::class, [
                 'required' => false,
                 'allow_delete' => false,
-                'download_uri' => false
+                'download_uri' => false,
+                'help' => 'format de l\'image 200px x 250px'
             ])
         ;
     }

@@ -32,7 +32,10 @@ class Platform
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url
+     * @Assert\Url(
+     *    message = "The url '{{ value }}' is not a valid url",
+     * )
+     * @Assert\NotNull
      */
     private $url;
 
