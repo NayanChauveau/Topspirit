@@ -82,6 +82,21 @@ class AdvertisingRepository extends ServiceEntityRepository
         ;
     }
     
+    /**
+     * @return User
+     */
+
+    public function findActiveUserAdd()
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.startingDate < :date')
+            ->andWhere('s.endingDate > :date')
+            ->setParameter('date', new \DateTimeImmutable)
+            ->getQuery()
+            ->getResult()[0]
+            ->getUser()
+        ;
+    }
 
 
     // /**

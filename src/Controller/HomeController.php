@@ -18,8 +18,11 @@ class HomeController extends AbstractController
 
         $platforms = $platformRepo->findPremiums();
 
+        $activeUserAdd = $ar->findActiveUserAdd();
+
         return $this->render('home/index.html.twig', [
-            'platforms' => $platforms
+            'platforms' => $platforms,
+            'activeUserAdd' => $activeUserAdd
         ]);
     }
 }

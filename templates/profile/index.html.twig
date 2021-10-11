@@ -60,6 +60,7 @@
                 {{ form_end(passwordform)}}
             </div>
 
+            
 
             
             {########### Les platformes ###########}
@@ -99,7 +100,9 @@
                     {% endfor %}
                 </div>
                 <a href="{{ path('platform_new') }}" class="btn btn-primary">Créer une plateforme</a>
+                
             </div>
+
 
             {########### Les publicités ###########}
 
@@ -119,6 +122,8 @@
                     </ul>
                 {% endif %}
 
+                <hr>
+
                 <h2 class="mb-3">Uploadez votre bannière</h2>
 
                 {% if user.advPicture is not null %}
@@ -137,6 +142,7 @@
                 <button class="btn btn-primary mb-5">Mettre à jour</button>
                 {{ form_end(advform) }}
 
+                <hr>
 
                 <h2 class="mb-3">Mettez votre bannière en première page du site !</h2>
                 <h6 class="mb-4">Positionnez-vous tout en haut de la page d'accueil avec une bannière format xl !</h6>

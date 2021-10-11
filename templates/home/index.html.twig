@@ -16,8 +16,8 @@
     <div class="container mt-5">
         <div class="row">
         <div class="col-md-12">
-            <div class="mb-4 shadow-sm border rounded position-relative" style="height: 250px; background-image: url('https://picsum.photos/940/250'); background-size: cover;">
-                <a href="#" class="stretched-link"></a>
+            <div class="mb-4 shadow-sm border rounded position-relative" style="height: 250px; background-image: url('{{ vich_uploader_asset(activeUserAdd, 'imageFile') | imagine_filter('adv_banner') }}'); background-size: cover;">
+                <a href="{{ activeUserAdd.advUrl }}" class="stretched-link"></a>
             </div>
         </div>
         {% for platform in platforms %}
