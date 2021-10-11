@@ -106,12 +106,42 @@
 
             <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
 
+                {% if advertisings is not empty %}
+                    <h2 class="mb-3">Vos périodes de publicités</h2>
+                    <h6 class="mb-3">L'espace de publicité en première page est a vous :</h6>
+                    <ul class="mb-5">
+                {% endif %}
+                    
+                {% for advertising in advertisings %}
+                    <li>Du {{ advertising.startingDate | date('d/m/Y') }} au {{ advertising.endingDate | date('d/m/Y') }}</li>
+                {% endfor %}
+                {% if advertisings is not empty %}
+                    </ul>
+                {% endif %}
+
+                <h2 class="mb-3">Uploadez votre bannière</h2>
+
+                {% if user.advPicture is not null %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-4 shadow-sm border rounded position-relative" style="height: 250px; background-image: url('{{ vich_uploader_asset(user, 'imageFile') | imagine_filter('adv_banner')  }}'); background-size: cover;">
+                                <a href="#" class="stretched-link"></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 
 
-                <h2 class="mb-3">Mettez votre bannière en première page du site !</h2>
-                <h6 class="mb-5">Positionnez-vous tout en haut de la page d'accueil avec une bannière format xl !</h6>
+                {{ form_start(advform) }}
+                {{ form_rest(advform) }}
+                <button class="btn btn-primary mb-5">Mettre à jour</button>
+                {{ form_end(advform) }}
 
-                <p>La bannière est disponible à partir du 26/04/2021</p>
+
+                <h2 class="mb-3">Mettez votre bannière en première page du site !</h2>
+                <h6 class="mb-4">Positionnez-vous tout en haut de la page d'accueil avec une bannière format xl !</h6>
+
+                <p>La bannière est disponible du {{ disponibility | date('d/m/Y') }} au {{ disponibility | date_modify("+1 month") | date('d/m/Y') }}.</p>
                 <form action="{{ path('advertising_checkout') }}" method="POST">
                     <button type="submit" class="btn btn-primary ">Je me lance !</button>
                 </form>

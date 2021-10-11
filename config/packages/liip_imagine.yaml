@@ -13,3 +13,7 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [140, 175], mode: outbound }
+        adv_banner:
+            quality: 75
+            filters:
+                thumbnail: { size: [1296, 250], mode: outbound }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\AdvFormType;
 use App\Form\ProfileType;
 use App\Form\PasswordChangeType;
 use App\Repository\AdvertisingRepository;
@@ -29,13 +30,15 @@ class ProfileController extends AbstractController
         );
 
         $activeAdvertising = $advertisingRepository->findActiveByUser($user);
+        $dateOfDisponibility = $advertisingRepository->dateOfDisponibility();
 
         $form = $this->createForm(ProfileType::class, $user);
         $passwordform = $this->createForm(PasswordChangeType::class, $user);
+        $advForm = $this->createForm(AdvFormType::class, $user);
 
         $form->handleRequest($request);
         $passwordform->handleRequest($request);
-
+        $advForm->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -54,7 +57,13 @@ class ProfileController extends AbstractController
             );
 
             $this->addFlash('success', 'Votre mot de passe a bien été changé');
+            
+            $em->persist($user);
+            $em->flush();
+        } elseif ($advForm->isSubmitted() && $advForm->isValid()) {
 
+            $this->addFlash('success', 'Votre bannière de pub a bien été éditée');
+            
             $em->persist($user);
             $em->flush();
         }
@@ -63,7 +72,10 @@ class ProfileController extends AbstractController
             'plateforms' => $plateforms,
             'form' => $form->createView(),
             'passwordform' => $passwordform->createView(),
-            'advertisings' => $activeAdvertising
+            'advform' => $advForm->createView(),
+            'advertisings' => $activeAdvertising,
+            'disponibility' => $dateOfDisponibility,
+            'user' => $user
         ]);
     }
 }

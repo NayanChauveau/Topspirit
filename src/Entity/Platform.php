@@ -5,10 +5,10 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\PlatformRepository;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\PlatformRepository;
 
 
 
@@ -165,8 +165,8 @@ class Platform
 	 * @return File|null
 	 */
 	function getImageFile() {
-                                                           return $this->imageFile;
-                                                       }
+        return $this->imageFile;
+    }
 	
 	/**
 	 * 
@@ -174,14 +174,14 @@ class Platform
 	 * @return Platform
 	 */
 	function setImageFile(File $imageFile = null): self {
-                                                           $this->imageFile = $imageFile;
-                                                   
-                                                           if ($imageFile) {
-                                                               $this->createdAt = new  \DateTimeImmutable();
-                                                           }
-                                                   
-                                                           return $this;
-                                                       }
+        $this->imageFile = $imageFile;
+
+        if ($imageFile) {
+            $this->createdAt = new  \DateTimeImmutable();
+        }
+
+        return $this;
+    }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
