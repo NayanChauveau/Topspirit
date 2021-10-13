@@ -162,7 +162,7 @@ class PaymentController extends AbstractController
         ;
         
         $platform->setEndOfSubscription(
-            $platform->getEndOfSubscription() === null ?
+            $platform->getEndOfSubscription() === null || $platform->getEndOfSubscription() <  (new \DateTimeImmutable()) ?
             (new \DateTimeImmutable())->modify('+1 month') :
                 $platform->getEndOfSubscription()->modify('+1 month')
             );
