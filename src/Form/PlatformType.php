@@ -14,7 +14,9 @@ class PlatformType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('content')
+            ->add('content', null, [
+                'help' => 'La description de la plateforme doit faire entre 20 et 300 caractères.'
+            ])
             ->add('url')
             ->add('imageFile', VichFileType::class, [
                 'required' => false,

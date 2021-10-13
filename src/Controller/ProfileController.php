@@ -30,6 +30,7 @@ class ProfileController extends AbstractController
         );
 
         $activeAdvertising = $advertisingRepository->findActiveByUser($user);
+        $actualAdvertisingUser = $advertisingRepository->findActiveUserAdd();
         $dateOfDisponibility = $advertisingRepository->dateOfDisponibility();
 
         $form = $this->createForm(ProfileType::class, $user);
@@ -75,8 +76,8 @@ class ProfileController extends AbstractController
             'passwordform' => $passwordform->createView(),
             'advform' => $advForm->createView(),
             'advertisings' => $activeAdvertising,
-            'disponibility' => $dateOfDisponibility,
-            'user' => $user
+            'actualAdvertisingUser' => $actualAdvertisingUser,
+            'disponibility' => $dateOfDisponibility
         ]);
     }
 }

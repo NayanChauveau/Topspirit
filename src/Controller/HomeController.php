@@ -15,7 +15,6 @@ class HomeController extends AbstractController
      */
     public function index(PlatformRepository $platformRepo, AdvertisingRepository $ar): Response
     {
-
         $platforms = $platformRepo->findPremiums();
 
         $activeUserAdd = $ar->findActiveUserAdd();
@@ -25,4 +24,14 @@ class HomeController extends AbstractController
             'activeUserAdd' => $activeUserAdd
         ]);
     }
+
+    /**
+     * @Route("/cgu", name="cgu")
+     */
+    public function cgu(): Response
+    {
+        return $this->render('home/cgu.html.twig', []);
+    }
+
+
 }

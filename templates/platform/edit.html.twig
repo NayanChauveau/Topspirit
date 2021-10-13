@@ -6,7 +6,7 @@
     <div class="container mt-5">
         <h1>Editer {{ platform.name }}</h1>
 
-    {{ include('platform/_form.html.twig', {'button_label': 'Editer'}) }}
+    {{ include('platform/_form.html.twig', {'button_label': 'Editer la plateforme'}) }}
 
     <div class="alert alert-danger">Pour faire monter votre site dans les résultats, redirigez vos clients vers cette url :<br>{{ url('redirect', {redirectToken: platform.redirectToken}) }}</div>
 
