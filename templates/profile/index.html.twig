@@ -67,39 +67,41 @@
 
 
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <h2 class="mb-5">Vos plateformes</h2>
+                <h2 class="mb-5">Vos platformes</h2>
 
-                {% if plateforms is empty %}
-                    <div class="alert alert-info">Vous n'avez pas encore de plateforme, créez en une !</div>
+                {% if platforms is empty %}
+                    <div class="alert alert-info">Vous n'avez pas encore de platforme, créez en une !</div>
                 {% endif %}
                 <div class="row mt-1 mb-4">
-                    {% for plateform in plateforms %}
+                    {% for platform in platforms %}
                         <div class="col-md-12">
                             <div class="row g-0 border rounded flex-md-row mb-4 shadow-sm h-md-250 position-relative">
 
-                                {% if date(plateform.endOfSubscription) != null and date(plateform.endOfSubscription) > date('now') %}
+                                {% if date(platform.endOfSubscription) != null and date(platform.endOfSubscription) > date('now') %}
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger w-auto">
                                         Premium
                                     </span>
                                 {% endif %}
 
-                                <div class="col-auto d-none d-lg-block">
-                                    <img src="{{ vich_uploader_asset(plateform, 'imageFile') | imagine_filter('miniature') }}" alt="">
-                                </div>
+                                {% if platform.banner %}
+                                    <div class="col-auto d-none d-lg-block">
+                                            <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('miniature') }}" alt="">
+                                    </div>
+                                {% endif %}
                                 <div class="col p-4 d-flex flex-column position-static">
                                     <strong class="d-inline-block mb-2 text-primary">World</strong>
-                                    <h3 class="mb-0">{{ plateform.name }}</h3>
+                                    <h3 class="mb-0">{{ platform.name }}</h3>
                                     <div class="mb-1 text-muted">Nov 12</div>
-                                    {% if plateform.content %}
-                                        <p class="card-text mb-auto">{{ plateform.content }}</p>
+                                    {% if platform.content %}
+                                        <p class="card-text mb-auto">{{ platform.content }}</p>
                                     {% endif %}
-                                    <a href="{{ path('platform_edit', {id: plateform.id}) }}" class="stretched-link">Continue reading</a>
+                                    <a href="{{ path('platform_edit', {id: platform.id}) }}" class="stretched-link">Continue reading</a>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
-                <a href="{{ path('platform_new') }}" class="btn btn-primary">Créer une plateforme</a>
+                <a href="{{ path('platform_new') }}" class="btn btn-primary">Créer une platforme</a>
                 
             </div>
 

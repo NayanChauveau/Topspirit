@@ -21,7 +21,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         // $this->user();
-        $this->plateform($manager);
+        $this->platform($manager);
 
         $manager->flush();
     }
@@ -36,15 +36,15 @@ class AppFixtures extends Fixture
         $this->manager->persist($user);
     }
 
-    private function plateform($manager)
+    private function platform($manager)
     {
         $user = $this->userRepo->find(9); //Trouver comment prendre un user au hasard dans le findAll.
 
         $faker = Factory::create();
 
         for ($i = 0; $i < 10; $i++) {
-            $plateform = new Platform;
-            $plateform
+            $platform = new Platform;
+            $platform
                 ->setName($faker->words(3, true))
                 ->setUrl($faker->url())
                 ->setBanner('img-template.jpg')
@@ -52,7 +52,7 @@ class AppFixtures extends Fixture
                 ->setUser($user)
                 ->setCreatedAt(new \DateTimeImmutable())
             ;
-            $manager->persist($plateform);
+            $manager->persist($platform);
         }
     }
 }

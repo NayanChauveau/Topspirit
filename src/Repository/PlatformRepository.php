@@ -27,7 +27,7 @@ class PlatformRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->where('p.endOfSubscription >= :date')
             ->setParameter('date', new \DateTimeImmutable)
-            ->orderBy('p.id', 'ASC') // A changer avec le nombre de visites qu'ils renvoient
+            ->orderBy('p.monthRedirect', 'DESC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -43,13 +43,13 @@ class PlatformRepository extends ServiceEntityRepository
             $this->createQueryBuilder('p')
             ->where('p.endOfSubscription >= :date')
             ->setParameter('date', new \DateTimeImmutable)
-            ->orderBy('p.id', 'ASC') // A changer avec le nombre de visites qu'ils renvoient
+            ->orderBy('p.monthRedirect', 'DESC')
             ->getQuery()
             ->getResult(),
             $this->createQueryBuilder('p')
             ->where('p.endOfSubscription < :date OR p.endOfSubscription is NULL')
             ->setParameter('date', new \DateTimeImmutable)
-            ->orderBy('p.id', 'ASC') // A changer avec le nombre de visites qu'ils renvoient
+            ->orderBy('p.monthRedirect', 'DESC')
             ->getQuery()
             ->getResult(),
             )

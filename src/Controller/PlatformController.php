@@ -4,29 +4,41 @@ namespace App\Controller;
 
 use App\Entity\Platform;
 use App\Form\PlatformType;
+use Doctrine\ORM\QueryBuilder;
 use App\Repository\PlatformRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use ContainerEsAMPdG\PaginatorInterface_82dac15;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * @Route("/platform")
  */
 class PlatformController extends AbstractController
 {
-    // /**
-    //  * @Route("/", name="platform_index", methods={"GET"})
-    //  */
-    // public function index(PlatformRepository $platformRepository): Response
-    // {
-    //     return $this->render('platform/index.html.twig', [
-    //         'platforms' => $platformRepository->findAll(),
-    //     ]);
-    // }
+    /**
+     * @Route("/", name="platform_index", methods={"GET"})
+     */
+    public function index(PlatformRepository $platformRepository, PaginatorInterface $paginator, Request $request): Response
+    {
+        $platforms = $platformRepository->findAllPremiumsFirst();
+
+        $paginatePlatforms = $paginator->paginate(
+            $platforms, /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            15 /*limit per page*/
+        );
+
+
+        return $this->render('platform/index.html.twig', [
+            'platforms' => $paginatePlatforms
+        ]);
+    }
 
     /**
      * @Route("/new", name="platform_new", methods={"GET","POST"})
@@ -79,7 +91,7 @@ class PlatformController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', 'Votre plateforme ' . $platform->getName() . ' a bien été éditée');
+            $this->addFlash('success', 'Votre platforme ' . $platform->getName() . ' a bien été éditée');
 
             $em->flush();
 
@@ -99,7 +111,7 @@ class PlatformController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete' . $platform->getId(), $request->request->get('_token'))) {
 
-            $this->addFlash('success', 'Votre plateforme ' . $platform->getName() . ' a bien été supprimée');
+            $this->addFlash('success', 'Votre platforme ' . $platform->getName() . ' a bien été supprimée');
 
             $em->remove($platform);
             $em->flush();

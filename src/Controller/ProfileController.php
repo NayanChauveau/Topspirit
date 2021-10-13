@@ -20,12 +20,12 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profil", name="profile")
      */
-    public function index(PlatformRepository $plateformRepo, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, AdvertisingRepository $advertisingRepository): Response
+    public function index(PlatformRepository $platformRepo, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, AdvertisingRepository $advertisingRepository): Response
     {
         $user = $this->getUser();
         if ($user->isVerified() === false) throw new AccessDeniedHttpException(); // Changer par une redirection vers une page qui dit de valider le mail
 
-        $plateforms = $plateformRepo->findBy(
+        $platforms = $platformRepo->findBy(
             ['user' => $user]
         );
 
@@ -71,7 +71,7 @@ class ProfileController extends AbstractController
         }
 
         return $this->render('profile/index.html.twig', [
-            'plateforms' => $plateforms,
+            'platforms' => $platforms,
             'form' => $form->createView(),
             'passwordform' => $passwordform->createView(),
             'advform' => $advForm->createView(),
