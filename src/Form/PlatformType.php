@@ -18,6 +18,9 @@ class PlatformType extends AbstractType
                 'help' => 'La description de la platforme doit faire entre 20 et 300 caractères.' // TODO
             ])
             ->add('url')
+            ->add('bannerAlt', null, [
+                'help' => 'Entrez une courte description de votre commerce'
+            ])
             ->add('imageFile', VichFileType::class, [
                 'required' => false,
                 'allow_delete' => false,

@@ -1,13 +1,21 @@
 {{ form_start(form) }}
-    {{ form_row(form.name, { 'label': 'Nom de la platforme' }) }}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.name, { 'label': 'Nom de la platforme' }) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.url, { 'label': 'Url du site' }) }}
+        </div>
+    </div>
     {{ form_row(form.content, { 'label': 'Description de la platforme' }) }}
-    {{ form_row(form.url, { 'label': 'Url du site' }) }}
+    
     <div class="row mb-3">
     {% if platform.banner is not empty %}
-        <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('mini_miniature') }}" alt="" class="mh-100 col-2">
+        <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('mini_miniature') }}" alt="" class="mh-100 col-3">
     {% endif %}
     <div class="col d-flex flex-column justify-content-center">
         {{ form_row(form.imageFile, { 'label': 'Votre bannière' }) }}
+        {{ form_row(form.bannerAlt, { 'label': 'Alt de l\'image de la bannière' })}}
     </div>
     </div>
     

@@ -108,6 +108,11 @@ class Platform
      */
     private $actualMonth;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $bannerAlt;
+
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
@@ -183,8 +188,8 @@ class Platform
 	 * @return File|null
 	 */
 	function getImageFile() {
-                                   return $this->imageFile;
-                               }
+                                            return $this->imageFile;
+                                        }
 	
 	/**
 	 * 
@@ -192,14 +197,14 @@ class Platform
 	 * @return Platform
 	 */
 	function setImageFile(File $imageFile = null): self {
-                                   $this->imageFile = $imageFile;
-                           
-                                   if ($imageFile) {
-                                       $this->createdAt = new  \DateTimeImmutable();
-                                   }
-                           
-                                   return $this;
-                               }
+                                            $this->imageFile = $imageFile;
+                                    
+                                            if ($imageFile) {
+                                                $this->createdAt = new  \DateTimeImmutable();
+                                            }
+                                    
+                                            return $this;
+                                        }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -311,6 +316,18 @@ class Platform
     public function setActualMonth(\DateTimeImmutable $actualMonth): self
     {
         $this->actualMonth = $actualMonth;
+
+        return $this;
+    }
+
+    public function getBannerAlt(): ?string
+    {
+        return $this->bannerAlt;
+    }
+
+    public function setBannerAlt(?string $bannerAlt): self
+    {
+        $this->bannerAlt = $bannerAlt;
 
         return $this;
     }
