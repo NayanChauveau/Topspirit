@@ -8,16 +8,37 @@
         </div>
     </div>
     {{ form_row(form.content, { 'label': 'Description de la platforme' }) }}
-    
-    <div class="row mb-3">
-    {% if platform.banner is not empty %}
-        <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('mini_miniature') }}" alt="" class="mh-100 col-3">
+
+    {% if date(platform.endOfSubscription) == null or date(platform.endOfSubscription) < date('now') %}
+        <div class="row mb-3">
+            {% if platform.banner is not empty %}
+                <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('mini_miniature') }}" alt="" class="mh-100 col-3">
+            {% endif %}
+            <div class="col d-flex flex-column justify-content-center">
+                {{ form_row(form.imageFile, { 
+                    'label': 'Votre bannière', 
+                    'help': 'Ceci est une fonctionnalité premium',
+                    'disabled': true 
+                    }) }}
+                    {# TODO find a solution to disable field #}
+                {{ form_row(form.bannerAlt, { 
+                    'label': 'Alt de l\'image de la bannière', 
+                    'help': 'Ceci est une fonctionnalité premium',
+                    'disabled': true
+                    })}}
+            </div>
+        </div>
+    {% else %}
+        <div class="row mb-3">
+            {% if platform.banner is not empty %}
+                <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('mini_miniature') }}" alt="" class="mh-100 col-3">
+            {% endif %}
+            <div class="col d-flex flex-column justify-content-center">
+                {{ form_row(form.imageFile, { 'label': 'Votre bannière' }) }}
+                {{ form_row(form.bannerAlt, { 'label': 'Alt de l\'image de la bannière' })}}
+            </div>
+        </div>
     {% endif %}
-    <div class="col d-flex flex-column justify-content-center">
-        {{ form_row(form.imageFile, { 'label': 'Votre bannière' }) }}
-        {{ form_row(form.bannerAlt, { 'label': 'Alt de l\'image de la bannière' })}}
-    </div>
-    </div>
     
     <button class="btn btn-primary mb-4">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}
