@@ -29,14 +29,15 @@ class PlatformController extends AbstractController
         $platforms = $platformRepository->findAllPremiumsFirst();
 
         $paginatePlatforms = $paginator->paginate(
-            $platforms, /* query NOT result */
+            $platforms, 
             $request->query->getInt('page', 1), /*page number*/
             15 /*limit per page*/
         );
 
 
         return $this->render('platform/index.html.twig', [
-            'platforms' => $paginatePlatforms
+            'platforms' => $paginatePlatforms,
+            'current_menu' => 'platforms'
         ]);
     }
 

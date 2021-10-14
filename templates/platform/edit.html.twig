@@ -8,7 +8,10 @@
 
     {{ include('platform/_form.html.twig', {'button_label': 'Editer la platforme'}) }}
 
-    <div class="alert alert-danger">Pour faire monter votre site dans les résultats, redirigez vos clients vers cette url :<br>{{ url('redirect', {redirectToken: platform.redirectToken}) }}</div>
+    <div class="mb-5">
+        <label for="urlRedirection" class="form-label">Pour faire monter votre site dans les résultats, redirigez vos clients vers cette url :</label>
+        <input type="text" class="form-control" id="urlRedirection" value="{{ url('redirect', {redirectToken: platform.redirectToken}) }}" disabled>
+    </div>
 
     <hr class="mb-4">
 
