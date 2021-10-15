@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Platform index{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Merci d'avoir pris le temps de venir voter sur le site !</h1>
+        {% for message in app.flashes('vote') %}
+            <h4>
+                {{ message }}
+            </h4>
+        {% endfor %}
+        <a href="{{ path('home') }}">Découvrir toutes les boutiques</a>
+    </div>
+{% endblock %}

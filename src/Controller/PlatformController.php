@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Platform;
+use App\Entity\Vote;
 use App\Form\PlatformType;
+use App\Form\VoteType;
 use Doctrine\ORM\QueryBuilder;
 use App\Repository\PlatformRepository;
+use App\Repository\VoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +18,7 @@ use ContainerEsAMPdG\PaginatorInterface_82dac15;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Monolog\DateTimeImmutable;
 
 /**
  * @Route("/platform")
@@ -31,8 +35,12 @@ class PlatformController extends AbstractController
         $paginatePlatforms = $paginator->paginate(
             $platforms, 
             $request->query->getInt('page', 1), /*page number*/
-            15 /*limit per page*/
+            10 /*limit per page*/
         );
+
+        $paginatePlatforms->setCustomParameters([
+            'align' => 'center', 
+        ]);
 
 
         return $this->render('platform/index.html.twig', [
@@ -122,20 +130,65 @@ class PlatformController extends AbstractController
     }
 
     /**
-     * @Route("/redirect/{redirectToken}", name="redirect")
+     * @Route("/vote/resultat", name="voteResult")
      */
-    public function platformRedirect(Platform $platform, EntityManagerInterface $em): Response
+    public function voteResult(): Response
     {
-        if ($platform->getActualMonth()->format('n') != (new \DateTimeImmutable)->format('n')) {
-            $platform->setActualMonth(new \DateTimeImmutable);
-            $platform->setMonthRedirect(1);
-        } else {
-            $platform->setMonthRedirect($platform->getMonthRedirect() === null ? 1 : $platform->getMonthRedirect() + 1);
+        return $this->render('platform/voteresult.html.twig', [
+        ]);
+    }
+
+    /**
+     * @Route("/vote/{redirectToken}", name="vote")
+     */
+    public function vote(Platform $platform, EntityManagerInterface $em, Request $request, VoteRepository $vr): Response
+    {
+
+        $form = $this->createForm(VoteType::class);
+        $form->handleRequest($request);
+
+        $actualVisitorArchive = $vr->findOneBy(['ipAddress' => $request->getClientIp()]);
+
+        if ($actualVisitorArchive !== null && $actualVisitorArchive->getVisitedAt()->format('n') === (new \DateTimeImmutable)->format('n')) {
+            $this->addFlash('vote', 'Vous ne pouvez voter qu\'une fois par mois. Revenez le mois prochain !');
+            
+            return $this->redirectToRoute('voteResult');
         }
 
-        $em->persist($platform);
-        $em->flush();
+        if (
+            $form->isSubmitted() 
+            // && $form->isValid() // TODO activer ça quand passage en prod, pour l'instant SSL error
+            ) {
+            if ($platform->getActualMonth()->format('n') != (new \DateTimeImmutable)->format('n')) {
+                $platform->setActualMonth(new \DateTimeImmutable);
+                $platform->setMonthRedirect(1);
+            } else {
+                $platform->setMonthRedirect($platform->getMonthRedirect() === null ? 1 : $platform->getMonthRedirect() + 1);
+            }
+            
+            if ($actualVisitorArchive === null) $actualVisitorArchive = new Vote;
 
-        return $this->redirectToRoute('home'); // Je pense le changer par une redirection vers la platforme
+            $actualVisitorArchive->setIpAddress($request->getClientIp());
+            $actualVisitorArchive->setVisitedAt(new \DateTimeImmutable);
+            
+    
+            $em->persist($platform);
+            $em->persist($actualVisitorArchive);
+            $em->flush();
+
+            $this->addFlash('vote', 'Votre vote a bien été pris en compte. Merci pour votre visite !');
+
+            return $this->redirectToRoute('voteResult');
+        } elseif ($form->isSubmitted()) {
+            $this->addFlash('vote', 'Ah ! Il semblerait que vous soyez un robot. Revenez quand les robots auront le droit de vote !'); 
+            return $this->redirectToRoute('voteResult');
+        } 
+
+
+        return $this->render('platform/vote.html.twig', [
+            'form' => $form->createView(),
+            'platform' => $platform
+        ]);
+
     }
 }
