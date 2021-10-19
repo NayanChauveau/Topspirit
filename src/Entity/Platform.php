@@ -113,6 +113,11 @@ class Platform
      */
     private $bannerAlt;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slug;
+
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
@@ -188,8 +193,8 @@ class Platform
 	 * @return File|null
 	 */
 	function getImageFile() {
-                                            return $this->imageFile;
-                                        }
+                                                     return $this->imageFile;
+                                                 }
 	
 	/**
 	 * 
@@ -197,14 +202,14 @@ class Platform
 	 * @return Platform
 	 */
 	function setImageFile(File $imageFile = null): self {
-                                            $this->imageFile = $imageFile;
-                                    
-                                            if ($imageFile) {
-                                                $this->createdAt = new  \DateTimeImmutable();
-                                            }
-                                    
-                                            return $this;
-                                        }
+                                                     $this->imageFile = $imageFile;
+                                             
+                                                     if ($imageFile) {
+                                                         $this->createdAt = new  \DateTimeImmutable();
+                                                     }
+                                             
+                                                     return $this;
+                                                 }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -328,6 +333,18 @@ class Platform
     public function setBannerAlt(?string $bannerAlt): self
     {
         $this->bannerAlt = $bannerAlt;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

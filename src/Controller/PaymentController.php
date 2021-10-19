@@ -22,7 +22,7 @@ use Monolog\DateTimeImmutable;
 class PaymentController extends AbstractController
 {
     /**
-     * @Route("/payment/{id}", name="payment")
+     * @Route("/payment/{slug}", name="payment")
      */
     public function index(Platform $platform): Response
     {
@@ -71,7 +71,7 @@ class PaymentController extends AbstractController
     }
 
     /**
-     * @Route("/checkout/{id}", name="checkout")
+     * @Route("/checkout/{slug}", name="checkout")
      */
     public function checkout($stripeSK, EntityManagerInterface $em, Platform $platform): Response
     {
@@ -93,7 +93,7 @@ class PaymentController extends AbstractController
             ]],
             'mode' => 'payment',
             'customer' => $user->getStripeId(),
-            'success_url' => $this->generateUrl('success_url', ['id' => $platform->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => $this->generateUrl('success_url', ['slug' => $platform->getSlug()], UrlGeneratorInterface::ABSOLUTE_URL) . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => $this->generateUrl('cancel_url', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
 
@@ -137,7 +137,7 @@ class PaymentController extends AbstractController
     }
 
     /**
-     * @Route("/success/{id}", name="success_url")
+     * @Route("/success/{slug}", name="success_url")
      */
     public function successUrl(Request $request, $stripeSK, SubscriptionsRepository $subRepo, Platform $platform, EntityManagerInterface $em): Response
     {

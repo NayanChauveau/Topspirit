@@ -18,14 +18,14 @@
     <div class="d-flex align-items-center mb-4">
         {% if date(platform.endOfSubscription) == null or date(platform.endOfSubscription) < date('now') %}
             <div class="mb-0 alert alert-info">Votre platforme n'est pas premium, upgradez pour plus de visibilité</div>
-            <a href="{{ path('payment', {id: platform.id}) }}" class="btn btn-primary ms-auto">Upgrader ma platforme</a>
+            <a href="{{ path('payment', {slug: platform.slug}) }}" class="btn btn-primary ms-auto">Upgrader ma platforme</a>
         {% else %}
             <div class="mb-0 alert alert-info">Votre platforme est premium jusqu'au {{ platform.endOfSubscription | date('d/m/Y') }}</div>
         {% endif %}
     </div>
 
 
-    <form method="post" action="{{ path('platform_delete', {'id': platform.id}) }}" onsubmit="return confirm('Etes vous sûr de vouloir supprimer la platforme ?');">
+    <form method="post" action="{{ path('platform_delete', {slug: platform.slug}) }}" onsubmit="return confirm('Etes vous sûr de vouloir supprimer la platforme ?');">
         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ platform.id) }}">
         <button class="btn btn-danger">Supprimer la platforme</button>
     </form>

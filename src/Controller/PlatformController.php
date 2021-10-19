@@ -19,6 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Monolog\DateTimeImmutable;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @Route("/platform")
@@ -52,7 +53,7 @@ class PlatformController extends AbstractController
     /**
      * @Route("/new", name="platform_new", methods={"GET","POST"})
      */
-    public function new(Request $request, EntityManagerInterface $em, UserInterface $user): Response
+    public function new(Request $request, EntityManagerInterface $em, UserInterface $user, SluggerInterface $slugger): Response
     {
         $platform = new Platform();
         $form = $this->createForm(PlatformType::class, $platform);
@@ -63,7 +64,11 @@ class PlatformController extends AbstractController
             $platform->setRedirectToken(sha1(random_bytes(12)));
 
             $platform->setActualMonth(new \DateTimeImmutable);
+            
+            $em->persist($platform);
+            $em->flush();
 
+            $platform->setSlug($slugger->slug($platform->getId() . ' ' . $platform->getName()));
             $em->persist($platform);
             $em->flush();
 
@@ -87,7 +92,7 @@ class PlatformController extends AbstractController
     // }
 
     /**
-     * @Route("/{id}/edit", name="platform_edit", methods={"GET","POST"})
+     * @Route("/{slug}/edit", name="platform_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Platform $platform, EntityManagerInterface $em): Response
     {
@@ -114,7 +119,7 @@ class PlatformController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="platform_delete", methods={"POST"})
+     * @Route("/{slug}", name="platform_delete", methods={"POST"})
      */
     public function delete(Request $request, Platform $platform, EntityManagerInterface $em): Response
     {
