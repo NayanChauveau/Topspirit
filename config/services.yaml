@@ -6,6 +6,7 @@
 parameters:
     platform_images: /uploads/platformes
     adv_images: /uploads/advertisings
+    articles_images: /uploads/articles
 
 services:
     # default configuration for services in *this* file
