@@ -14,6 +14,9 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Publicités</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="article-tab" data-bs-toggle="tab" data-bs-target="#article" type="button" role="tab" aria-controls="article" aria-selected="false">Articles de blog</button>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
 
@@ -161,6 +164,39 @@
                     </form>
                     <div class="col-4 d-flex align-items-center display-6 "><strong>150€/Mois</strong></div>
                 </div>
+            </div>
+
+            {########### Les articles de article ###########}
+
+            <div class="tab-pane fade" id="article" role="tabpanel" aria-labelledby="article-tab">
+                <h2 class="mb-5">Vos articles de blog</h2>
+
+                {% if articles is empty %}
+                    <div class="alert alert-info">Vous n'avez pas encore d'articles de article, créez en un !</div>
+                {% endif %}
+                <div class="row mt-1 mb-4">
+                    {% for article in articles %}
+                        <div class="col-md-12">
+                            <div class="row g-0 border rounded flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                                {% if article.image %}
+                                    <div class="col-auto d-none d-lg-block">
+                                            {# <img src="{{ vich_uploader_asset(platform, 'imageFile') | imagine_filter('miniature') }}" alt=""> TODO #}
+                                    </div>
+                                {% endif %}
+                                <div class="col p-4 d-flex flex-column position-static">
+                                    <strong class="d-inline-block mb-2 text-primary">World</strong>
+                                    <h3 class="mb-0">{{ article.title }}</h3>
+                                    <div class="mb-1 text-muted">{{ article.createdAt | date('d/m/Y')}}</div>
+                                    {% if article.content %}
+                                        <p class="card-text mb-auto">{{ article.content }}</p>
+                                    {% endif %}
+                                    <a href="{{ path('article_edit', {slug: article.slug}) }}" class="stretched-link">Continue reading</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a href="{{ path('article_new') }}" class="btn btn-primary">Créer un article</a>
             </div>
         </div>
     </div>

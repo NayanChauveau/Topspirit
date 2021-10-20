@@ -5,9 +5,10 @@ namespace App\Controller;
 use App\Form\AdvFormType;
 use App\Form\ProfileType;
 use App\Form\PasswordChangeType;
-use App\Repository\AdvertisingRepository;
+use App\Repository\ArticleRepository;
 use App\Repository\PlatformRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AdvertisingRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,12 +21,15 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profil", name="profile")
      */
-    public function index(PlatformRepository $platformRepo, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, AdvertisingRepository $advertisingRepository): Response
+    public function index(PlatformRepository $platformRepo, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, AdvertisingRepository $advertisingRepository, ArticleRepository $articleRepo): Response
     {
         $user = $this->getUser();
         if ($user->isVerified() === false) throw new AccessDeniedHttpException(); // Changer par une redirection vers une page qui dit de valider le mail
 
         $platforms = $platformRepo->findBy(
+            ['user' => $user]
+        );
+        $articles = $articleRepo->findBy(
             ['user' => $user]
         );
 
@@ -72,6 +76,7 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/index.html.twig', [
             'platforms' => $platforms,
+            'articles' => $articles,
             'form' => $form->createView(),
             'passwordform' => $passwordform->createView(),
             'advform' => $advForm->createView(),
